@@ -1,3 +1,6 @@
+from ast import mod
+
+
 class Node:
     def __init__(self, data):
         """
@@ -62,10 +65,14 @@ class LinkedList():
             raise ValueError("Please enter a valid mode - 'list' or 'cli'")
         
     def __create_from_list(self, node_list):
-        pass
+        for node_value in node_list:
+            self.insert(node_value, mode='head')
 
-    def __create_from_cli():
-        pass
+    def __create_from_cli(self):
+        user_input = input("Enter the values of nodes separated by space: ")
+        node_list = user_input.strip(" ").split(" ")
+        for node_value in node_list:
+            self.insert(node_value, mode='head')
 
     def insert(self, data, mode='head', **kwargs):
         if mode == 'head':
@@ -79,7 +86,7 @@ class LinkedList():
             raise ValueError("Invalid mode - head/tail/index")
         return self.head
 
-    def count(self, mode):
+    def count(self, mode='iterative'):
         if mode == 'iterative':
             count = self.__iterative_count(head=self.head)
         elif mode == 'recursive':
@@ -103,7 +110,7 @@ class LinkedList():
 
     def __delete_by_value(self, value):
         if self.head is None:
-            return
+            raise IndexError("No head, index out of range")
         current = self.head
         trailing_node = None
         while current:
@@ -117,6 +124,23 @@ class LinkedList():
             current = current.next
         return None
     
+    def __delete_by_index(self, index):
+        if self.head is None:
+            raise IndexError("No head, index out of range")
+
+        current = self.head
+        idx_current = 0
+        trailing_node = None
+        if index > self.count():
+            raise IndexError("Index out of range")
+        while idx_current < index and current:
+            trailing_node = current
+            current = current.next
+            idx_current += 1
+        trailing_node.next = current.next
+        deleted_node = current
+        return deleted_node
+
     def __iterative_count(self, head):
         if head is None:
             return 0
@@ -197,3 +221,11 @@ if __name__ == "__main__":
     node2.next = node3
     ll = LinkedList(node1)
     ll.search(3)
+
+    l4 = LinkedList()
+    l4.create(mode='list', node_list=[3,6,8])
+    l4.display()
+
+    l5 = LinkedList()
+    l5.create(mode='cli')
+    l5.display()
